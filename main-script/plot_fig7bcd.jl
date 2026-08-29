@@ -1,11 +1,10 @@
 """
-Reproduces `CompetingPathways_rate_diff_omegac.pdf`.
+Creates the combined, publication-width Figure 7(b-e).
 
 Stacked bar chart of the coherent/phonon/cavity contributions to the
 transition-rate "probability current" between pairs of eigenstates of the
-ratio-2.0 asymmetric double well, at three cavity frequencies (with the
-forward/backward rate constants k_l/k_r vs. cavity frequency shown above,
-and small potential-energy-surface insets).
+ratio-2.0 asymmetric double well, at three cavity frequencies, with the
+forward/backward rate constants k_l/k_r and branching ratios shown above.
 
 Required data (relative to FLATIRON_ROOT), for
 tag = "markovianity0.01_ktol1e-8_MixStates12and34_distinguished":
@@ -38,7 +37,7 @@ include(joinpath(@__DIR__, "..", "common.jl"))
 # end
 
 # rate_data = load(require_file(joinpath(EXPERIMENTS_DIR, EXP * "_rate_data_tag" * rate_tag * ".jld2")), "data")
-rate_data = load("EnhancementSweep_etanu0.1_gammanu200_etac0.1_TripleWell_NearDegenerate_4_rate_data_tagmarkovianity0.01_ktol1e-8_MixStates123and789_distinguished.jld2", "data")
+rate_data = load(joinpath(@__DIR__, "EnhancementSweep_etanu0.1_gammanu200_etac0.1_TripleWell_NearDegenerate_4_rate_data_tagmarkovianity0.01_ktol1e-8_MixStates123and789_distinguished.jld2"), "data")
 # _, sysdat = get_bath_and_sys_params(EXP, rate_tag)
 sysdat = load(joinpath(@__DIR__, "..", "data", "SystemsData", "overtonic_morefinetuned.jld2"))
 
@@ -71,15 +70,22 @@ Pair_labels = [
     raw"$\mathsf{\textbf{R}}\!_\textbf{4}$",
         ]
 
-sys_fig_size = (300, 300)
-rate_fig_size = (650, sys_fig_size[2])
+# Final PDF dimensions. Plots.jl uses points for vector output:
+# 510 pt = 7.08 in = 179.9 mm, a standard two-column publication width.
+const FIGURE_SIZE = (650, 350)
+const TOP_HEIGHT = 165
+const BOTTOM_HEIGHT = FIGURE_SIZE[2] - TOP_HEIGHT
 
 # omegacs = sort(collect(keys(rate_data)))
 omegacs = [0, 530, 800, 1570]
 plt_rates = plot(
     xticks=(collect(1:(length(Pairs)+1)*length(omegacs)-1), repeat(vcat(Pair_labels, ""), length(omegacs))[1:end-1]),
     grid=false,
-    size=rate_fig_size
+    xlim=(0, (length(Pairs)+1)*length(omegacs)-0.5),
+    size=(FIGURE_SIZE[1], BOTTOM_HEIGHT),
+    tickfontsize=7,
+    guidefontsize=10,
+    legendfontsize=8
 )
 hline!(plt_rates, [0.0], color=:black, linewidth=0.2, alpha=1.0, label="")
 
@@ -105,9 +111,11 @@ for (n_omegac, omegac) in enumerate(omegacs)
 end
 
 plot!(plt_rates,
-    # ylim=(-0.2, 3.4),
-    legend=(0.2,0.7),
-    left_margin=3Plots.mm,
+    ylim=(-0.05, 0.76),
+    legend=(0.19, 0.70),
+    left_margin=2Plots.mm,
+    right_margin=1Plots.mm,
+    bottom_margin=2Plots.mm,
     xlabel=raw"$\mathsf{Transitions}$",
     ylabel = raw"$\mathsf{prob. curr.}\quad[\,\!\!\!\times 10^{-6} \mathsf{fs}^{-1}]$",
     # legend=nothing,
@@ -135,7 +143,6 @@ plot!(plt_rates,
 # plot_V!(plt_rates; subplot=4, inset=(1, bbox(0.855, 0.12, 0.1, 0.2)))
 
 # Forward/backward rate constants vs. cavity frequency (pre-computed HEOM results)
-w = 600
 k_omegacs = [0, 220, 270, 370, 420, 520, 530, 570, 670, 720, 800, 820, 870, 970, 1020, 1120, 1170, 1270, 1320, 1420, 1470, 1570, 1620, 1720, 1770, 1870, 1920, 2020, 2070, 2170]
 k0l = [8.337941973170922e-8, 8.569656306258228e-8, 8.415014789177302e-8, 8.547726090310633e-8, 8.519771266192297e-8, 8.466982230562982e-8, 8.190345663060776e-8, 8.300492022708703e-8, 9.079699499592884e-8, 9.516369911252656e-8, 9.917942007974515e-8, 1.0026850360351777e-7, 9.34103790828767e-8, 8.869917015014817e-8, 8.55603627190414e-8, 8.953569995886163e-8, 8.833435383284136e-8, 9.388314577424422e-8, 9.69608026745865e-8, 1.2493335512244837e-7, 1.51889557485011e-7, 2.1469735154131193e-7, 2.0407346480792858e-7, 1.4086853003543274e-7, 1.2201710734844227e-7, 1.0370172207747732e-7, 9.805335964654704e-8, 9.350906151333254e-8, 8.763332062248001e-8, 8.452789936751738e-8]
 k0r = [2.802691032457006e-7, 2.911285205661006e-7, 2.850739454009751e-7, 2.95358399583289e-7, 2.9832330009175595e-7, 3.142113903382259e-7, 3.0222203036005377e-7, 3.082492923492649e-7, 3.2175274730969954e-7, 3.370270511117063e-7, 3.4794870301648575e-7, 3.4905404397156677e-7, 3.2828004955130234e-7, 3.0301200527926653e-7, 2.8871715554175895e-7, 2.909166276256557e-7, 2.7979412315084224e-7, 2.7689949773594095e-7, 2.6911578142323453e-7, 2.6640149429180573e-7, 2.586337060624796e-7, 2.4226100865948255e-7, 2.460919363000388e-7, 2.6080199079041263e-7, 2.6567415106034415e-7, 2.7118256472409915e-7, 2.6997349134660386e-7, 2.733831593865171e-7, 2.640461897924406e-7, 2.61711377169858e-7]
@@ -146,16 +153,50 @@ plot!(plt_k, [k0r[1] * 1e6], seriestype=:hline, lw=1.2, color=:blue, alpha=0.5, 
 plot!(plt_k, k_omegacs[2:end], k0r[2:end] * 1e6, color=:blue, lw=3, label=raw"$k\!\!\!_\rightarrow$")
 plot!(plt_k, k_omegacs[2:end], k0l[2:end] * 1e6, color=:red, lw=3, label=raw"$k\!\!\!_\leftarrow$")
 plot!(plt_k, [530, 800, 1570], seriestype=:vline, color=:grey, ls=:dash, label=nothing)
-plot!(plt_k, size=(rate_fig_size[1], 200), dpi=300,
-    legend=(0.5, 0.5), legendfontsize=13, legend_background_color=:transparent, fg_legend=:transparent,
-    xlabel=raw"$\omega_c\quad[\mathsf{cm}^{-1}]$", ylabel=raw"$k\quad[\,\!\!\!\times 10^{-6} \mathsf{fs}^{-1}]$")
+plot!(plt_k,
+    size=(393, TOP_HEIGHT),
+    legend=(0.50, 0.50),
+    legendfontsize=9,
+    tickfontsize=8,
+    guidefontsize=10,
+    legend_background_color=:transparent,
+    fg_legend=:transparent,
+    left_margin=1Plots.mm,
+    right_margin=1Plots.mm,
+    bottom_margin=1Plots.mm,
+    xlabel=raw"$\omega_c\quad[\mathsf{cm}^{-1}]$",
+    ylabel=raw"$k\quad[\,\!\!\!\times 10^{-6} \mathsf{fs}^{-1}]$")
 
-top_row_layout = grid(1, 3, widths=[0.2, 0.6, 0.2])
-top_row = plot(plot(grid=false, xaxis=false, yaxis=false), plt_k, plot(grid=false, xaxis=false, yaxis=false), layout=top_row_layout)
+# Fig. 7e: branching ratios. The zero-cavity datum is omitted as in the
+# original standalone script.
+branch_left = k0l ./ (k0l .+ k0r)
+branch_right = k0r ./ (k0l .+ k0r)
+plt_branch = plot(
+    k_omegacs[2:end], branch_left[2:end],
+    color=:red, lw=2, label=nothing,
+    xlim=(250, 2200), ylim=(0, 1),
+    xticks=[500, 1500], xminorticks=5,
+    yticks=0:0.25:1, yminorticks=5,
+    grid=true,
+    size=(117, TOP_HEIGHT),
+    tickfontsize=8,
+    guidefontsize=10,
+    left_margin=1Plots.mm,
+    right_margin=0Plots.mm,
+    bottom_margin=1Plots.mm,
+    xlabel=raw"$\omega_c\quad[\mathsf{cm}^{-1}]$",
+    ylabel=raw"$k_{\leftrightharpoons}/(k_{\rightarrow}+k_{\leftarrow})$")
+plot!(plt_branch, k_omegacs[2:end], branch_right[2:end], color=:blue, lw=2, label=nothing)
+annotate!(plt_branch, 1625, 0.14, text(raw"$k_{\leftarrow}$", color=:red, pointsize=9))
+annotate!(plt_branch, 1625, 0.88, text(raw"$k_{\rightarrow}$", color=:blue, pointsize=9))
+
+# Preserve Fig. 7e's narrow aspect while keeping the adjacent rate plot wide.
+# The panel order places Fig. 7e on the right, after the existing panels.
+top_row = plot(plt_k, plt_branch; layout=grid(1, 2, widths=[0.77, 0.23]))
 
 plt_out = plot(top_row, plt_rates;
-    layout=grid(2, 1, heights=[0.4, 0.6]),
-    size=(rate_fig_size[1], 450),
+    layout=grid(2, 1, heights=[TOP_HEIGHT / FIGURE_SIZE[2], BOTTOM_HEIGHT / FIGURE_SIZE[2]]),
+    size=FIGURE_SIZE,
     dpi=300
 )
 
