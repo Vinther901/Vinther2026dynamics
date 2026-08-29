@@ -1,0 +1,25 @@
+bath: S_isotropic     # | Type of bath to fit
+
+theta: 0.5
+# Bath parameters
+ω_c:  {value: 220.0, unit: invcm}      # | Cavity frequency
+T:    {value: 300.0, unit: K}           # | Temperature
+η_c:  0.1                               # | Light-matter interaction strength
+η_ν:  0.1                              # | Friction parameter of molecular phonon bath
+γ_ν:  {value: 200.0, unit: invcm}      # | Characteristic frequency of molecular phonon bath
+
+# System parameters
+M:    {value: 1836.0, unit: au}         # | Effective mass (only parameter not in cm^-1)
+ω_b:  {value: 1000.0, unit: invcm}      # | Barrier frequency
+
+# Bath fitting parameters
+ωl:   {value: -0.99, unit: au}    # | left cutoff to bound the support of the noise spectrum.
+ωh:   {value: 1.0, unit: au}     # | right cutoff to bound the support of the noise spectrum.
+max_degree: 100                         # | maximum degree of polynomial fit to the noise spectrum
+tol:        1e-14                       # | tolerance for convergence
+lookahead:  50                         # | number of iterations to determines stagnation
+lawson:     20                         # | lawson parameter for fitting
+
+# Plot parameters
+ω_min: {value: -2250, unit: invcm}     # | minimum frequency for plotting (in invcm)
+ω_max: {value: 5050.0, unit: invcm}    # | maximum frequency for plotting
