@@ -41,12 +41,11 @@ data are present with `git lfs ls-files`.
 Run a script from any working directory. For example:
 
 ```bash
-julia --project=. main-script/plot_fig5.jl
-julia --project=. SI/plot_fig14.jl
+julia main-script/plot_fig5.jl
+julia SI/plot_fig14.jl
 ```
 
-The first run may take longer while Julia precompiles packages. Existing PDFs
-with the same names are overwritten. All paths are resolved relative to the
+The first run may take longer while Julia precompiles packages. All paths are resolved relative to the
 script, so no source-code edits or environment variables are required.
 
 ## Repository layout
@@ -93,7 +92,7 @@ collection of cavity-frequency files.
 | Figure 17(a–d) | `SI/plot_fig17.jl` | `SI/fig17a.pdf`–`SI/fig17d.pdf` | double-well system files; SI `EnhancementSweep_…ratio{0.125,0.167,0.25,4.0,6.0,8.0}…jld2`; main-text ratio `0.5` and `2.0` sweep files |
 
 The long `EnhancementSweep_…` names retain the simulation parameters used to
-produce each dataset. Consult the corresponding script for the exact filename.
+produce each dataset.
 
 ## Notes on reproducibility
 
