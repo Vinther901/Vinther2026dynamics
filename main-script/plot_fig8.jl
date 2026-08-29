@@ -14,8 +14,6 @@ Required data (relative to FLATIRON_ROOT):
 include(joinpath(@__DIR__, "..", "common.jl"))
 using Printf
 
-# const BATH_YAML_DIR = joinpath(@__DIR__, "..", "data", "BathsData", "YAML_scripts")
-
 thetas = [0.05, 0.25, 0.5, 0.75, 0.95]
 
 bath0_params = load_file(require_file(joinpath(@__DIR__, "etac0.yaml")))
@@ -84,5 +82,4 @@ plot!(p[3, 1], omegas, DeltaS.(convert_unit(omegas, :invcm, :au)), color=:black,
 annotate!(p[3, 1], 1300, 1, text(raw"Outside\nCavity", 8))
 annotate!(p[3, 1], 1210, 1.4, text(raw"$\leftarrow$", 9))
 
-# savefig(p, joinpath(@__DIR__, "NoiseSpectrumsWithOC_filled.pdf"))
 savefig(p, joinpath(@__DIR__, "fig8.pdf"))

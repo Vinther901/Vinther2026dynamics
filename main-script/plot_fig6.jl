@@ -1,15 +1,14 @@
 #!/usr/bin/env julia
 
-# Recreates the two-panel probability-current figure plt_tmp from
-# "ProbCurrent Figure Maker_latest.ipynb" (cells 17, 23-25).
+"""
+Reproduce Figure 6 (`fig6.pdf`), showing probability-current contributions
+for asymmetric double wells with well-frequency ratios 2.0 and 0.5.
+
+Required inputs are the two ratio-specific `EnhancementSweep_*.jld2` files
+stored next to this script.
+"""
 
 include(joinpath(@__DIR__, "..", "common.jl"))
-
-# -----------------------------------------------------------------------------
-# User-configurable paths
-# -----------------------------------------------------------------------------
-const FLATIRON_ROOT = "/mnt/home/jvinther/ceph/FlatironStudy"
-const OUTPUT_FILE = joinpath(@__DIR__, "prob_current_figure.pdf")
 
 # -----------------------------------------------------------------------------
 # Notebook helper: extract the rate contributions for transition i -> j.
@@ -96,31 +95,7 @@ end
 # Transition list and labels used by the notebook for the TripleWell figure.
 # This is the active definition in cell 13 at the point where cells 23-25 run.
 # -----------------------------------------------------------------------------
-# Pairs = [
-#     [9, 7],
-#     [9, 8],
-#     [7, 3],
-#     [1, 5],
-#     [5, 9],
-#     [9, 10],
-#     [10, 8],
-#     [8, 6],
-#     [6, 4],
-#     [4, 2],
-# ]
 
-# Pair_labels = [
-#     raw"$\mathsf{\textbf{T}}\!\!\!_\textbf{\leftarrow}$",
-#     raw"$\mathsf{\textbf{T}}\!\!\!_\textbf{\rightarrow}$",
-#     raw"$\mathsf{\textbf{L}}\!_\textbf{0}$",
-#     raw"$\mathsf{\textbf{M}}\!_\textbf{0}$",
-#     raw"$\mathsf{\textbf{M}}\!_\textbf{1}$",
-#     raw"$\mathsf{\textbf{R}}\!_\textbf{0}$",
-#     raw"$\mathsf{\textbf{R}}\!_\textbf{1}$",
-#     raw"$\mathsf{\textbf{R}}\!_\textbf{2}$",
-#     raw"$\mathsf{\textbf{R}}\!_\textbf{3}$",
-#     raw"$\mathsf{\textbf{R}}\!_\textbf{4}$",
-# ]
 Pairs = [[1, 2], [4, 3], [1, 4], [3, 2]]
 Pair_labels = [raw"$\mathsf{\textbf{T}}\!_\textbf{0}$", raw"$\mathsf{\textbf{T}}\!_\textbf{1}$",
     raw"$\mathsf{\textbf{T}}\!\!\!_\textbf{\uparrow}$", raw"$\mathsf{\textbf{T}}\!\!\!_\textbf{\downarrow}$"]
@@ -131,16 +106,9 @@ rate_fig_size = (650, 150)#(650, 300)
 # -----------------------------------------------------------------------------
 # Top panel: ratio 2.0 data -> plt_rates
 # -----------------------------------------------------------------------------
-# EXP_top = "EnhancementSweep_etanu0.1_gammanu200_etac0.1_ratio2.0"
-# RATE_TAG = "markovianity0.01_ktol1e-8_MixStates12and34_distinguished"
 
-# rate_file_top = joinpath(
-#     FLATIRON_ROOT,
-#     "Experiments",
-#     EXP_top,
-#     "rate_data_tag" * RATE_TAG * ".jld2",
-# )
-rate_data_top = load("EnhancementSweep_etanu0.1_gammanu200_etac0.1_ratio2.0_rate_data_tagmarkovianity0.01_ktol1e-8_MixStates12and34_distinguished.jld2", "data")
+rate_data_top = load(require_file(joinpath(@__DIR__,
+    "EnhancementSweep_etanu0.1_gammanu200_etac0.1_ratio2.0_rate_data_tagmarkovianity0.01_ktol1e-8_MixStates12and34_distinguished.jld2")), "data")
 
 omegacs_top = sort([keys(rate_data_top)...])
 
@@ -220,15 +188,8 @@ plot!(
 # -----------------------------------------------------------------------------
 # Bottom panel: ratio 0.5 data -> plt_rates2
 # -----------------------------------------------------------------------------
-# EXP_bottom = "EnhancementSweep_etanu0.1_gammanu200_etac0.1_ratio0.5"
-
-# rate_file_bottom = joinpath(
-#     FLATIRON_ROOT,
-#     "Experiments",
-#     EXP_bottom,
-#     "rate_data_tag" * RATE_TAG * ".jld2",
-# )
-rate_data_bottom = load("EnhancementSweep_etanu0.1_gammanu200_etac0.1_ratio0.5_rate_data_tagmarkovianity0.01_ktol1e-8_MixStates12and34_distinguished.jld2", "data")
+rate_data_bottom = load(require_file(joinpath(@__DIR__,
+    "EnhancementSweep_etanu0.1_gammanu200_etac0.1_ratio0.5_rate_data_tagmarkovianity0.01_ktol1e-8_MixStates12and34_distinguished.jld2")), "data")
 
 omegacs_bottom = sort([keys(rate_data_bottom)...])
 
@@ -305,9 +266,7 @@ plt_tmp = plot(
     plt_rates2,
     link = :xy,
     layout = grid(2, 1),
-    size=(rate_fig_size[1], rate_fig_size[2]*2),
-    # left_margin = -3Plots.mm,
-
+    size=(rate_fig_size[1], 2 * rate_fig_size[2]),
 )
 
 # Save the combined figure.

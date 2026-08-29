@@ -8,7 +8,7 @@ theta between the cavity axis and the molecular dipole, compared for the
 projections.
 
 Required data (relative to FLATIRON_ROOT):
-  - HarryPlotter/EnvironmentDrivenDistributionOfRates.jld2
+  - SI/EnvironmentDrivenDistributionOfRates.jld2
     (keys "res", "res_iso": Dict{theta => (; K::Matrix)})
 """
 
@@ -21,7 +21,6 @@ omegacsFGR = LinRange(150, 2250, 150)
 thetas = [0.05, 0.25, 0.5, 0.75, 0.95]
 colors = Dict(theta => palette(:rainbow1, length(thetas))[i] for (i, theta) in enumerate(thetas))
 
-# _loaded = load(require_file(joinpath(FLATIRON_ROOT, "HarryPlotter", "EnvironmentDrivenDistributionOfRates.jld2")))
 _loaded = load(require_file(joinpath(@__DIR__, "EnvironmentDrivenDistributionOfRates.jld2")))
 res = _loaded["res"]
 res_iso = _loaded["res_iso"]
@@ -79,5 +78,4 @@ pbottom = plot(plots_bottom..., layout=(1, 5), size=(300 * 5, 200), grid=false, 
 
 pltout = plot(ptop, plot(pbottom, top_margin=-6Plots.mm), layout=(2, 1), size=(300 * 5, 200 * 2))
 
-# savefig(pltout, joinpath(@__DIR__, "DistributionOfRates.pdf"))
 savefig(pltout, joinpath(@__DIR__, "fig12.pdf"))

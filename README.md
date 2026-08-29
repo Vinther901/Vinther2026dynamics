@@ -1,98 +1,109 @@
-# Vinther2026dynamics
+# Figure-reproduction data for Vinther et al. (2026)
 
-Standalone Julia scripts that reproduce the figures used in the manuscript.
-Each script is self-contained and can be run independently:
+This repository contains the Julia scripts and simulation data needed to
+reproduce the figures accompanying the manuscript **[paper title and citation
+to be added when available]**.
+
+Each plotting script is independent: it activates the repository's Julia
+environment, reads only files included here, and writes PDF output next to the
+script. The scripts do not rerun the underlying HEOM simulations.
+
+## Requirements
+
+- [Git](https://git-scm.com/)
+- [Git LFS](https://git-lfs.com/)
+- [Julia](https://julialang.org/downloads/) 1.12 (the version recorded in
+  `Manifest.toml`; other recent Julia 1.x releases may also work)
+
+The complete checkout occupies approximately **2.1 GB**: `main-script/` is
+about **1.1 GB**, `SI/` about **1.0 GB**, and `data/` about **7.4 MB**. Git's
+local LFS objects can require roughly another 2.1 GB. Sizes can differ slightly
+between filesystems.
+
+## Setup
+
+Clone the repository and download the Git LFS objects before running a script:
 
 ```bash
-julia path/to/script.jl
+git clone <repository-url> Vinther2026dynamics
+cd Vinther2026dynamics
+git lfs pull
+julia --project=. -e 'using Pkg; Pkg.instantiate()'
 ```
 
-Each script writes its figure(s) as a PDF into the same folder that the script is in.
+If the repository was downloaded as a source archive rather than cloned with
+Git, the large `.jld2` files may be missing. A Git clone followed by
+`git lfs pull` is the supported installation method. You can confirm that the
+data are present with `git lfs ls-files`.
 
-## Layout
+## Reproducing a figure
 
-- `SI/` — scripts and data for the figures found in the SI.
-- `data/` — data files that is shared by the `main-script/` and `SI/`
-- `main-script/` — scripts and data for the figures found in the main manuscript.
-- `common.jl` — shared imports, environment activation, and helper functions
-  (Gibbs-state bath corrections, eigenstate mixing, rate-bar plotting, etc.)
-  used by several of the figure scripts. Not meant to be run directly.
+Run a script from any working directory. For example:
 
-TODO:
-- Include in readme: 
-  - an instruction to instantiate the environment and to load the files pushed with git lfs
-  - the size of the folders.
-  - a complete overview of the files and folders and how the scripts and data-files go together.
-
-<!-- - One script per figure (or closely related group of figures), listed below. -->
-
-<!-- This folder is self-contained for data — only the analysis source code and the shared Julia environment are
-pulled from sibling folders:
-
+```bash
+julia --project=. main-script/plot_fig5.jl
+julia --project=. SI/plot_fig14.jl
 ```
-JuliaEnvs/MyJuliaEnv/         Julia project used by all scripts
-FlatironStudy/src/            analysis code (ITensorHEOM module)
-FlatironReproduceFigures/     this folder
-  data/                       all data, self-contained
-  common.jl
-  *.jl                        one script per figure
-``` -->
 
-<!-- ## Scripts and required data
+The first run may take longer while Julia precompiles packages. Existing PDFs
+with the same names are overwritten. All paths are resolved relative to the
+script, so no source-code edits or environment variables are required.
 
-Paths below are relative to `FlatironReproduceFigures/data/`.
+## Repository layout
 
-| Script | Figure(s) | Data required | Status |
+```text
+Vinther2026dynamics/
+├── Project.toml              Julia dependencies
+├── Manifest.toml             pinned dependency versions
+├── common.jl                 shared setup, physics routines, and plot helpers
+├── main-script/              main-text scripts, local inputs, and PDF outputs
+├── SI/                       supplementary scripts, local inputs, and outputs
+└── data/
+    ├── BathsData/            shared bath decompositions
+    └── SystemsData/          shared potentials and eigenstates
+```
+
+The `.jld2` files are precomputed simulation results stored with Git LFS.
+Small YAML files contain bath parameters. `common.jl` activates the project and
+provides the unit conversions, bath models, equilibrium corrections, and
+rate-plot helpers used across figures; it is not intended to be run directly.
+
+## Figures and data dependencies
+
+Paths in the table are relative to the repository root. Wildcards denote a
+collection of cavity-frequency files.
+
+| Manuscript figure | Script | Output | Input data |
 |---|---|---|---|
-| `kinetic_vs_thermodynamic_control.jl` | `ExampleOfKineticVsThermodynamicControl.pdf` | none (self-contained toy model) | ✅ ready |
-| `addition_to_competing_pathways.jl` | `AdditionToCompetingPathways_main_plot.pdf` | none (rate values hard-coded from prior HEOM runs) | ✅ ready |
-| `asymmetric_transition_rates.jl` | `asymmetric_transition_rates2.pdf` | `HarryPlotter/PlottingTools/ReactionRates.jld2`, `SystemsData/Data/degenerate_asymmetric_double_well_ratio{2,4,6,8}.0.jld2` | ✅ ready |
-| `equilibrium_populations_double_wells.jl` | `EquilibriumPopulations_DoubleWells.pdf` | `SystemsData/Data/degenerate_asymmetric_double_well_ratio{2,4,6,8}.0.jld2`, `BathsData/Data/enhancement_bath_sweep_precise/*.jld2`, `HarryPlotter/PlottingTools/ReactionRates.jld2` | ✅ ready |
-| `distribution_of_rates.jl` | `DistributionOfRates.pdf` | `HarryPlotter/EnvironmentDrivenDistributionOfRates.jld2` | ✅ ready |
-| `phonon_dressed_triple_well_pes.jl` | `PhononDressedEffectiveTripleWellPES.pdf` | `SystemsData/Data/degenerate_asymmetric_triple_wells/overtonic_morefinetuned.jld2`, `BathsData/Data/enhancement_bath_sweep_precise/etac0.jld2`, `BathsData/Data/distinguished_enhancement_bath/omegac1570.jld2` | ✅ ready |
-| `equilibrium_populations_triple_wells.jl` | `EquilibriumPopulations_TripleWells.pdf` | `SystemsData/Data/degenerate_asymmetric_triple_wells/overtonic_morefinetuned.jld2`, `BathsData/Data/enhancement_bath_sweep_precise/*.jld2` | ✅ ready |
-| `noise_spectrums_with_oc.jl` | `NoiseSpectrumsWithOC_filled.pdf` | `BathsData/YAML_scripts/enhancement_bath_sweep_precise/etac0.yaml`, `BathsData/YAML_scripts/isotropic_baths_precise/theta_*/omegac220.yaml` | ✅ ready |
-| `markovian_heom_approximation.jl` | `ProofOfMarkovianCorrection.pdf` | `BathsData/Data/enhancement_bath_sweep_precise/etac0.jld2` (present), `Experiments/MarkovianityHEOMApproximations2/Data/*_renormedjump.jld2` | ⏳ needs `Experiments/...` |
-| `environment_driven_rates.jl` | `EnvironmentDrivenRates.pdf` | `HarryPlotter/EnvironmentDrivenRates_data.jld2` (consolidated raw simulation traces, see below); bath YAML configs already present | ⏳ needs consolidated file |
-| `simple_noise_spectrums.jl` | `SimpleNoiseSpectrums.pdf` | `Experiments/EnhancementSweep_etanu0.1_gammanu200_etac0.1_ratio0.25` | ⏳ needs `Experiments/...` |
-| `symmetric_transition_rates2.jl` | `symmetric_transition_rates2.pdf`, `CompetingPathways_transition_rates.pdf` | `Experiments/EnhancementSweep_etanu0.1_gammanu200_etac0.1_TripleWell_NearDegenerate_4` | ⏳ needs `Experiments/...` |
-| `competing_pathways_rate_diff_omegac.jl` | `CompetingPathways_rate_diff_omegac.pdf` | `Experiments/EnhancementSweep_etanu0.1_gammanu200_etac0.1_ratio2.0` | ⏳ needs `Experiments/...` |
+| Figure 3 | `main-script/plot_fig3.jl` | `main-script/fig3.pdf` | `main-script/etac0.yaml` |
+| Figure 4(b,c) | `main-script/plot_fig4bc.jl` | `main-script/fig4bc.pdf` | `main-script/EnhancementSweep_…ratio1.0…jld2`; total rates embedded in script |
+| Figure 5 | `main-script/plot_fig5.jl` | `main-script/fig5.pdf` | `main-script/ReactionRates.jld2`; `data/SystemsData/degenerate_asymmetric_double_well_ratio{2,4,6,8}.0.jld2` |
+| Figure 6 | `main-script/plot_fig6.jl` | `main-script/fig6.pdf` | `main-script/EnhancementSweep_…ratio{2.0,0.5}…jld2` |
+| Figure 7(a) | `main-script/plot_fig7a.jl` | `main-script/fig7a.pdf` | `data/SystemsData/overtonic_morefinetuned.jld2` |
+| Figure 7(b–d) | `main-script/plot_fig7bcd.jl` | `main-script/fig7bcd.pdf` | `main-script/EnhancementSweep_…TripleWell…jld2`; `data/SystemsData/overtonic_morefinetuned.jld2` |
+| Figure 8 | `main-script/plot_fig8.jl` | `main-script/fig8.pdf` | `main-script/etac0.yaml`; `main-script/theta*.yaml` |
+| Figure 9 | `main-script/plot_fig9.jl` | `main-script/fig9.pdf` | `main-script/EnvironmentDrivenRates_data.jld2`; `main-script/etac0.yaml`; `main-script/theta*.yaml` |
+| Figure 11 | `SI/plot_fig11.jl` | `SI/fig11.pdf` | `SI/MarkovianityHEOMApproximations.jld2`; `data/BathsData/enhancement_bath_sweep_precise/etac0.jld2` |
+| Figure 12 | `SI/plot_fig12.jl` | `SI/fig12.pdf` | `SI/EnvironmentDrivenDistributionOfRates.jld2` |
+| Figure 13 (left) | `SI/plot_fig13_left.jl` | `SI/fig13_left.pdf` | `data/SystemsData/overtonic_morefinetuned.jld2`; bath files `etac0.jld2` and `distinguished_enhancement_bath/omegac1570.jld2` |
+| Figure 13 (right) | `SI/plot_fig13_right.jl` | `SI/fig13_right.pdf` | `data/SystemsData/overtonic_morefinetuned.jld2`; `data/BathsData/enhancement_bath_sweep_precise/*.jld2` |
+| Figure 14 | `SI/plot_fig14.jl` | `SI/fig14.pdf` | `main-script/ReactionRates.jld2`; double-well system files; `data/BathsData/enhancement_bath_sweep_precise/*.jld2` |
+| Figure 15 | `SI/plot_fig15.jl` | `SI/fig15.pdf` | none (model parameters are embedded in the script) |
+| Figure 16 | `SI/plot_fig16.jl` | `SI/fig16.pdf` | none (rate data are embedded in the script) |
+| Figure 17(a–d) | `SI/plot_fig17.jl` | `SI/fig17a.pdf`–`SI/fig17d.pdf` | double-well system files; SI `EnhancementSweep_…ratio{0.125,0.167,0.25,4.0,6.0,8.0}…jld2`; main-text ratio `0.5` and `2.0` sweep files |
 
-Each script has a docstring-style header comment listing its exact data
-dependencies. If a required file is missing, the script raises a clear error
-naming the missing path (see `require_file` in `common.jl`) rather than
-failing with a generic I/O error.
+The long `EnhancementSweep_…` names retain the simulation parameters used to
+produce each dataset. Consult the corresponding script for the exact filename.
 
-Nine of thirteen scripts are fully self-contained and verified to run
-end-to-end against the data in this folder. The remaining four need genuine
-HEOM/rate-equation simulation outputs (`Experiments/...`) that only exist on
-the cluster — copying bath/system config files alone cannot substitute for
-those. `environment_driven_rates.jl`'s bath-config dependency has already
-been resolved locally (via `BathsData/YAML_scripts/isotropic_baths_precise/`);
-it only still needs the raw simulation traces.
+## Notes on reproducibility
 
-### Consolidating cluster-only data into a single file
+- The numerical simulation outputs are supplied; these scripts reproduce the
+  analysis and figures, not the original high-cost simulations.
+- Plot appearance can vary slightly with Julia, package, font, or PDF backend
+  versions. The committed `Manifest.toml` is provided to minimize such drift.
+- A missing input raises an error containing its expected path. In most cases,
+  this means `git lfs pull` has not completed.
 
-For `environment_driven_rates.jl`, run the notebook cell appended to the
-bottom of `FlatironStudy/HarryPlotter/PlottingTools/Figure Maker.ipynb` (on
-the machine where the `Experiments/...` data lives). It bundles the raw HEOM
-simulation traces into one portable `EnvironmentDrivenRates_data.jld2` file —
-copy just that one file to `data/HarryPlotter/EnvironmentDrivenRates_data.jld2`
-here and the script will load it directly. -->
+## License
 
-<!-- ## Notes on fidelity to the original notebooks
-
-The original analysis notebooks (`FlatironStudy/HarryPlotter/**/*.ipynb`)
-were exploratory and not written to be run top-to-bottom: `savefig` calls
-were commented out, and in a few places later cells depended on global
-variables set by cells for a *different* figure (rerun interactively with
-different parameters). Each script here was reconstructed as a clean,
-linear, top-to-bottom pipeline for exactly one figure; where the original
-notebook's dependency chain was ambiguous, the choice made is noted in the
-script's header comment.
-
-Three additional exploratory variants from `ProbCurrent Figure Maker_latest.ipynb`
-(`rate_plot3_ratio2.0_and_ratio0.5.pdf`, `symmetric_rate_diff_omegac2.pdf`) were
-not curated here, since they depend on manual, non-linear reruns of the
-notebook that could not be reliably reconstructed; `competing_pathways_rate_diff_omegac.jl`
-and `symmetric_transition_rates2.jl` cover the same underlying data/analysis. -->
+See [LICENSE](LICENSE).

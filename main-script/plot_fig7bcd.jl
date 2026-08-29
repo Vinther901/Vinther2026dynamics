@@ -6,13 +6,9 @@ transition-rate "probability current" between pairs of eigenstates of the
 ratio-2.0 asymmetric double well, at three cavity frequencies, with the
 forward/backward rate constants k_l/k_r and branching ratios shown above.
 
-Required data (relative to FLATIRON_ROOT), for
-tag = "markovianity0.01_ktol1e-8_MixStates12and34_distinguished":
-  - Experiments/EnhancementSweep_etanu0.1_gammanu200_etac0.1_ratio2.0/
-    rate_data_tag<tag>.jld2   (key "data": Dict{omegac => rate_data} with
-    fields .rate_coh, .rate_nu, .rate_Mnu, .rate_c, .rate_Mc, .times)
-  - Experiments/EnhancementSweep_etanu0.1_gammanu200_etac0.1_ratio2.0/
-    YAML_scripts/*<tag>.yaml
+Required data:
+  - the TripleWell `EnhancementSweep_*.jld2` file next to this script
+  - data/SystemsData/overtonic_morefinetuned.jld2
 
 The forward/backward rate arrays (k0l, k0r) below are pre-computed HEOM
 results copied verbatim from the source notebook.
@@ -20,26 +16,8 @@ results copied verbatim from the source notebook.
 
 include(joinpath(@__DIR__, "..", "common.jl"))
 
-# const EXPERIMENTS_DIR = joinpath(FLATIRON_ROOT, "Experiments")
-# const BATH_YAML_DIR = joinpath(FLATIRON_ROOT, "BathsData", "YAML_scripts")
-
-# EXP = "EnhancementSweep_etanu0.1_gammanu200_etac0.1_ratio2.0"
-# rate_tag = "markovianity0.01_ktol1e-8_MixStates12and34_distinguished"
-
-# function get_bath_and_sys_params(EXP, tag)
-#     exp_dir = joinpath(EXPERIMENTS_DIR, EXP)
-#     yaml_files = filter(f -> endswith(f, tag * ".yaml"), readdir(joinpath(exp_dir, "YAML_scripts"); join=true))
-#     isempty(yaml_files) && error("No YAML config matching tag '$tag' found in $(joinpath(exp_dir, "YAML_scripts"))")
-#     exp_params = load_file(yaml_files[1])
-#     params = load_file(require_file(joinpath(BATH_YAML_DIR, exp_params["bath"] * ".yaml")))
-#     sysdat = load(require_file(joinpath(FLATIRON_ROOT, "SystemsData", "Data", exp_params["system"] * ".jld2")))
-#     return params, sysdat
-# end
-
-# rate_data = load(require_file(joinpath(EXPERIMENTS_DIR, EXP * "_rate_data_tag" * rate_tag * ".jld2")), "data")
-rate_data = load(joinpath(@__DIR__, "EnhancementSweep_etanu0.1_gammanu200_etac0.1_TripleWell_NearDegenerate_4_rate_data_tagmarkovianity0.01_ktol1e-8_MixStates123and789_distinguished.jld2"), "data")
-# _, sysdat = get_bath_and_sys_params(EXP, rate_tag)
-sysdat = load(joinpath(@__DIR__, "..", "data", "SystemsData", "overtonic_morefinetuned.jld2"))
+rate_data = load(require_file(joinpath(@__DIR__, "EnhancementSweep_etanu0.1_gammanu200_etac0.1_TripleWell_NearDegenerate_4_rate_data_tagmarkovianity0.01_ktol1e-8_MixStates123and789_distinguished.jld2")), "data")
+sysdat = load(require_file(joinpath(@__DIR__, "..", "data", "SystemsData", "overtonic_morefinetuned.jld2")))
 
 # ratio2.0 double well: the two lowest tunneling doublets, mixed pairwise
 states, energies = get_states_and_energies([[1, 2], [3, 4]], sysdat["eigvecs"], sysdat["eigvals"], sysdat["x"])
@@ -47,9 +25,6 @@ E_displacement = energies[1]
 rate = 25
 sys_xlims = (-3.5, 5.1)
 
-# Pairs = [[1, 2], [4, 3], [1, 4], [3, 2]]
-# Pair_labels = [raw"$\mathsf{\textbf{T}}\!_\textbf{0}$", raw"$\mathsf{\textbf{T}}\!_\textbf{1}$",
-#     raw"$\mathsf{\textbf{T}}\!\!\!_\textbf{\uparrow}$", raw"$\mathsf{\textbf{T}}\!\!\!_\textbf{\downarrow}$"]
 Pairs = [
     [9,7],
     [9,8],
@@ -125,22 +100,6 @@ plot!(plt_rates,
     # bottom_margin=-7Plots.mm,
     grid=true
 )
-
-# function plot_V!(plt; subplot, inset)
-#     x = sysdat["x"][1:rate:end]
-#     V = copy(sysdat["V"][1:rate:end])
-#     V .-= E_displacement
-#     V = convert_unit.(V, :au, :invcm)
-#     plot!(plt, x, V;
-#         subplot, inset,
-#         legend=false, ticks=false, frame=:box,
-#         ylim=(-900, 3000), xlim=(-3.2, 5),
-#         color=:grey, lw=2, alpha=1.0, grid=false,
-#         yticks=nothing, xticks=nothing, showaxis=false)
-# end
-# plot_V!(plt_rates; subplot=2, inset=(1, bbox(0.205, 0.12, 0.1, 0.2)))
-# plot_V!(plt_rates; subplot=3, inset=(1, bbox(0.53, 0.12, 0.1, 0.2)))
-# plot_V!(plt_rates; subplot=4, inset=(1, bbox(0.855, 0.12, 0.1, 0.2)))
 
 # Forward/backward rate constants vs. cavity frequency (pre-computed HEOM results)
 k_omegacs = [0, 220, 270, 370, 420, 520, 530, 570, 670, 720, 800, 820, 870, 970, 1020, 1120, 1170, 1270, 1320, 1420, 1470, 1570, 1620, 1720, 1770, 1870, 1920, 2020, 2070, 2170]

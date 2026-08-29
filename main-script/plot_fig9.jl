@@ -6,8 +6,8 @@ frequency, for several angles theta between the cavity axis and the
 molecular dipole) against a Fermi's-Golden-Rule estimate built from the
 noise-spectrum enhancement due to the cavity.
 
-Required data (relative to FLATIRON_ROOT):
-  - HarryPlotter/EnvironmentDrivenRates_data.jld2
+Required data:
+  - main-script/EnvironmentDrivenRates_data.jld2
     (only the raw HEOM simulation traces: pr_data_by_theta, baseline_test_pr/times,
     baseline_enh_pr/times — see the notebook cell below)
   - BathsData/YAML_scripts/enhancement_bath_sweep_precise/etac0.yaml
@@ -25,8 +25,6 @@ configs are ordinary source-repo files, not simulation outputs.
 include(joinpath(@__DIR__, "..", "common.jl"))
 using QuadGK
 
-# const BATH_YAML_DIR = joinpath(@__DIR__, "..", "data", "BathsData", "YAML_scripts")
-# const DATA_FILE = require_file(joinpath(FLATIRON_ROOT, "HarryPlotter", "EnvironmentDrivenRates_data.jld2"))
 _data = load(require_file(joinpath(@__DIR__, "EnvironmentDrivenRates_data.jld2")))
 
 thetas = _data["thetas"]
@@ -153,5 +151,4 @@ end
 scatter!(plt, [0], [0], color=:grey, label="HEOM")
 plot!(plt, [0], [0], color=:grey, label="FGR", lw=2, ylim=(3.9, 6.5), xlim=(150, 2250), size=(450, 350), dpi=300)
 
-# savefig(plt, joinpath(@__DIR__, "EnvironmentDrivenRates.pdf"))
 savefig(plt, joinpath(@__DIR__, "fig9.pdf"))

@@ -905,33 +905,8 @@ function make_probability_current_figure(
 end
 
 
-# ============================================================================
-# Example call
-# ============================================================================
-#
-# Keep this commented if using the file via `include(...)`.
-#
-# sysdata = (
-#     sysdat          = sysdat,
-#     states          = states,
-#     energies        = energies,
-#     E_displacement  = E_displacement,
-# )
-#
-# plt_out = make_probability_current_figure(
-#     sysdata,
-#     rate_data1,
-#     rate_data2,
-#     Pairs,
-#     Pair_labels;
-#     output_file="prob_current_figure.pdf",
-# )
-# ============================================================================
-
 ratios = reverse([2.0, 4.0, 6.0, 8.0])
 inv_ratios = reverse([0.5, 0.25, 0.167, 0.125])
-# ratios = [2.0]
-# inv_ratios = [0.5]
 sysdata = Dict(
     ratio => load(require_file(joinpath(@__DIR__, "..", "data", "SystemsData",
         "degenerate_asymmetric_double_well_ratio$(ratio).jld2")))
@@ -956,21 +931,8 @@ rate_datas2[2.0] = load(require_file(joinpath(@__DIR__, "..", "main-script",
     "EnhancementSweep_etanu0.1_gammanu200_etac0.1_ratio0.5_rate_data_tagmarkovianity0.01_ktol1e-8_MixStates12and34_distinguished.jld2")), "data")
 
 
-# rate_datas1 = Dict(2.0 => load(require_file(joinpath(@__DIR__, "..", "main-script",
-#     "EnhancementSweep_etanu0.1_gammanu200_etac0.1_ratio2.0_rate_data_tagmarkovianity0.01_ktol1e-8_MixStates12and34_distinguished.jld2")), "data")
-# )
-
-# rate_datas2 = Dict(2.0 => load(require_file(joinpath(@__DIR__, "..", "main-script",
-#     "EnhancementSweep_etanu0.1_gammanu200_etac0.1_ratio0.5_rate_data_tagmarkovianity0.01_ktol1e-8_MixStates12and34_distinguished.jld2")), "data")
-# )
-
 for (key, sysdat) in sysdata
     i = Dict(2.0 => 1, 4.0 => 2, 6.0 => 3, 8.0 => 4)[key]
-    # wslims = (-850, 2150)
-    # sys_xlims = (-2, 3.5)
-    # num_states = 7
-    # sys_ratio = 0.05
-    # sys_fig_size = (250, 300)
     mix_states = [
         [[1, 2], [3, 4]],
         [[1, 2], [4, 5]],

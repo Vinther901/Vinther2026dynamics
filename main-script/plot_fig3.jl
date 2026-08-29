@@ -6,25 +6,10 @@ the "lossy cavity" contribution, evaluated at three representative
 frequencies (the two well frequencies and the barrier frequency) of the
 degenerate double-well/triple-well reaction coordinate.
 
-Required data (relative to FLATIRON_ROOT), for tag = "markovianity0.01_ktol1e-8":
-  - Experiments/EnhancementSweep_etanu0.1_gammanu200_etac0.1_ratio0.25/
-    YAML_scripts/*<tag>.yaml
-  - BathsData/YAML_scripts/<bath>.yaml   (bath name given by the YAML above)
+Required data: `main-script/etac0.yaml`.
 """
 
 include(joinpath(@__DIR__, "..", "common.jl"))
-
-# const EXPERIMENTS_DIR = joinpath(FLATIRON_ROOT, "Experiments")
-# const BATH_YAML_DIR = joinpath(FLATIRON_ROOT, "BathsData", "YAML_scripts")
-
-# tag = "markovianity0.01_ktol1e-8"
-# EXP = "EnhancementSweep_etanu0.1_gammanu200_etac0.1_ratio0.25"
-
-# exp_dir = joinpath(EXPERIMENTS_DIR, EXP)
-# yaml_files = filter(f -> endswith(f, tag * ".yaml"), readdir(joinpath(exp_dir, "YAML_scripts"); join=true))
-# isempty(yaml_files) && error("No YAML config matching tag '$tag' found in $(joinpath(exp_dir, "YAML_scripts"))")
-# exp_params = load_file(yaml_files[1])
-# params = load_file(require_file(joinpath(BATH_YAML_DIR, exp_params["bath"] * ".yaml")))
 
 params = load_file(joinpath(@__DIR__, "etac0.yaml"))
 params["η_c"] = 0.1
@@ -75,5 +60,4 @@ plot_S(plt)
 annotate!(plt, 1280, 5.57, (raw"$\omega_c$", 10, omegac_color))
 plot!(plt, right_margin=2Plots.mm)
 
-# savefig(plt, joinpath(@__DIR__, "SimpleNoiseSpectrums.pdf"))
 savefig(plt, joinpath(@__DIR__, "fig3.pdf"))

@@ -6,7 +6,7 @@ asymmetric double-well systems (well-frequency ratios 2, 4, 6, 8), each shown
 alongside an inset of the mixed eigenstates on the potential energy surface.
 
 Required data (relative to FLATIRON_ROOT):
-  - HarryPlotter/PlottingTools/ReactionRates.jld2  (key "data": Dict keyed by
+  - main-script/ReactionRates.jld2  (key "data": Dict keyed by
     ratio/inverse-ratio, each with fields `.omegacs`, `.k`)
   - SystemsData/Data/degenerate_asymmetric_double_well_ratio{2.0,4.0,6.0,8.0}.jld2
     (keys "eigvecs", "eigvals", "x", "V")
@@ -14,7 +14,6 @@ Required data (relative to FLATIRON_ROOT):
 
 include(joinpath(@__DIR__, "..", "common.jl"))
 
-# data = load(require_file(joinpath(FLATIRON_ROOT, "HarryPlotter", "PlottingTools", "ReactionRates.jld2")), "data")
 data = load(require_file(joinpath(@__DIR__, "ReactionRates.jld2")), "data")
 
 ratios = reverse([2.0, 4.0, 6.0, 8.0])
@@ -148,5 +147,4 @@ plt = plot(plts..., layout=(1, 4), size=(550, 400), dpi=300,
     top_margin=-1Plots.mm,
 )
 
-# savefig(plt, joinpath(@__DIR__, "asymmetric_transition_rates2.pdf"))
 savefig(plt, joinpath(@__DIR__, "fig5.pdf"))

@@ -98,5 +98,4 @@ plot!(plt_sys,
     bottom_margin=-2Plots.mm
 )
 
-# savefig(plt_sys, joinpath(@__DIR__, "PhononDressedEffectiveTripleWellPES.pdf"))
 savefig(plt_sys, joinpath(@__DIR__, "fig13_left.pdf"))

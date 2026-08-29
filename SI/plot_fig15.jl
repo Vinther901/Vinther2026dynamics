@@ -17,12 +17,6 @@ beta = 1 / T
 
 k_0l, k_0r = 0.1, 0.3
 
-# pi_l = 0.31284
-# pi_r = 0.35184
-# pi_0 = 1 - pi_l - pi_r
-
-# k_l0 = k_0l * pi_0 / pi_l
-# k_r0 = k_0r * pi_0 / pi_r
 k_l0 = 0.004
 k_r0 = 0.006
 
@@ -113,5 +107,4 @@ plt = plot(p2, p1, layout=grid(1, 2, widths=[0.4, 0.6]), size=(1000, 300), dpi=3
     left_margin=5Plots.mm
 )
 
-# savefig(plt, joinpath(@__DIR__, "ExampleOfKineticVsThermodynamicControl.pdf"))
 savefig(plt, joinpath(@__DIR__, "fig15.pdf"))

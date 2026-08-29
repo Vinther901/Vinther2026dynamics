@@ -1,8 +1,13 @@
 #!/usr/bin/env julia
 
-# Include this if `load`, `require_file`, or other project helpers are needed.
+"""
+Reproduce Figure 4(b,c) (`fig4bc.pdf`), combining the total reaction-rate
+sweep with its probability-current decomposition. The sweep totals are
+embedded below; the decomposition is loaded from the ratio-1.0
+`EnhancementSweep_*.jld2` file next to this script.
+"""
+
 include(joinpath(@__DIR__, "..", "common.jl"))
-using Plots
 # =============================================================================
 # Input data for the upper total-rate panel
 # =============================================================================
@@ -173,148 +178,6 @@ end
 # Lower panel
 # =============================================================================
 
-# """
-# Create grouped stacked-current bars for the selected cavity frequencies.
-
-# `rate_data` must be indexed by cavity frequency:
-
-#     rate_data[1200]
-#     rate_data[1270]
-#     rate_data[1500]
-
-# Each contained object must have the fields used by `get_rates_ij`.
-# """
-# function make_selected_rate_plot(
-#     rate_data,
-#     Pairs,
-#     Pair_labels;
-#     selected_omegacs=[1200, 1270, 1500],
-#     t0=6000,
-#     ylims=(-0.25, 6.0),
-#     figure_size=(650, 250),
-# )
-#     @assert length(Pairs) == length(Pair_labels) "Pairs and Pair_labels must have the same length."
-
-#     for omegac in selected_omegacs
-#         haskey(rate_data, omegac) || error(
-#             "rate_data does not contain cavity frequency omega_c=$omegac. " *
-#             "Available keys are $(sort(collect(keys(rate_data))))."
-#         )
-#     end
-
-#     n_pairs = length(Pairs)
-#     n_groups = length(selected_omegacs)
-
-#     # Leave one empty x position between adjacent frequency groups.
-#     group_width = n_pairs + 1
-
-#     tick_positions = Int[]
-#     tick_labels = String[]
-
-#     for group_index in 1:n_groups
-#         group_start = (group_index - 1) * group_width
-
-#         append!(
-#             tick_positions,
-#             group_start .+ collect(1:n_pairs),
-#         )
-
-#         append!(tick_labels, Pair_labels)
-#     end
-
-#     xmax = (n_groups - 1) * group_width + n_pairs + 0.7
-
-#     plt = plot(
-#         size=figure_size,
-#         dpi=300,
-#         xlim=(0.3, xmax),
-#         ylim=ylims,
-#         xticks=(tick_positions, tick_labels),
-#         legend=(0.81, 0.78),
-#         legend_background_color=:transparent,
-#         legend_foreground_color=:transparent,
-#         grid=true,
-#         xlabel="",
-#         ylabel=raw"$\mathsf{prob.\ curr.}\quad[\,\!\!\!\times 10^{-6}\mathsf{fs}^{-1}]$",
-#     )
-
-#     hline!(
-#         plt,
-#         [0.0];
-#         color=:black,
-#         lw=0.5,
-#         label=false,
-#     )
-
-#     for (group_index, omegac) in enumerate(selected_omegacs)
-#         group_start = (group_index - 1) * group_width
-
-#         for (pair_index, pair) in enumerate(Pairs)
-#             i, j = pair
-#             rates = get_rates_ij(
-#                 rate_data[omegac],
-#                 i,
-#                 j;
-#                 t0=t0,
-#             )
-
-#             xcenter = group_start + pair_index
-
-#             # Add legend entries only once.
-#             labels = if group_index == n_groups && pair_index == n_pairs
-#                 Dict(
-#                     :r_coh => raw"$\mathsf{Tunneling}$",
-#                     :r_nu => raw"$\mathsf{Solvent}$",
-#                     :r_c => raw"$\mathsf{Cavity}$",
-#                 )
-#             else
-#                 Dict(
-#                     :r_coh => nothing,
-#                     :r_nu => nothing,
-#                     :r_c => nothing,
-#                 )
-#             end
-
-#             stacked_fillbar!(
-#                 plt,
-#                 rates;
-#                 xcenter=xcenter,
-#                 labels=labels,
-#             )
-#         end
-
-#         # Cavity-frequency label centered over each group.
-#         group_center = group_start + (n_pairs + 1) / 2
-
-#         annotate!(
-#             plt,
-#             group_center,
-#             ylims[2] - 0.4,
-#             (
-#                 raw"$\omega_c=" *
-#                 string(omegac) *
-#                 raw"\mathsf{cm}^{-1}$",
-#                 12,
-#                 :black,
-#             ),
-#         )
-
-#         # Vertical separator between groups.
-#         if group_index < n_groups
-#             separator_x = group_start + n_pairs + 0.5
-
-#             vline!(
-#                 plt,
-#                 [separator_x];
-#                 color=:black,
-#                 lw=1.0,
-#                 label=false,
-#             )
-#         end
-#     end
-
-#     return plt
-# end
 function make_rate_plot(
     rate_data,
     Pairs,
@@ -491,10 +354,8 @@ function make_rate_figure(
         bottom_margin=4Plots.mm,
     )
 
-    # if output_file !== nothing
-    savefig(plt_out, joinpath(@__DIR__,"fig4bc.pdf"))
-    #     println("Saved figure to: ", abspath(output_file))
-    # end
+    output_path = isabspath(output_file) ? output_file : joinpath(@__DIR__, output_file)
+    savefig(plt_out, output_path)
 
     return plt_out
 end
@@ -516,9 +377,8 @@ plt_out = make_rate_figure(
     Pairs,
     Pair_labels;
     selected_omegacs=selected_omegacs,
-    output_file="fig4bc.pdf", 
+    output_file="fig4bc.pdf",
     t0=6000,
 )
-
 
 

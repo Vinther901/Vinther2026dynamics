@@ -10,7 +10,7 @@ Required data (relative to FLATIRON_ROOT):
   - SystemsData/Data/degenerate_asymmetric_double_well_ratio{2.0,4.0,6.0,8.0}.jld2
     (keys "eigvecs", "eigvals", "x")
   - BathsData/Data/enhancement_bath_sweep_precise/*.jld2   (keys "z", "d")
-  - HarryPlotter/PlottingTools/ReactionRates.jld2   (key "data")
+  - main-script/ReactionRates.jld2   (key "data")
 """
 
 include(joinpath(@__DIR__, "..", "common.jl"))
@@ -31,7 +31,6 @@ sort!(bathdata, by=x -> x.omegac)
 
 println("Beware, this will take some time to run, since it computes the Gibbs-corrected populations for each bath file. Expect ~60min? (rough estimate)")
 println("It's possible to reduce the number of bath files to speed this up, but then the plot will be less smooth. See the commented-out line below.")
-# bathdata = bathdata[1:length(bathdata)÷8:end]
 omegacs = [dat.omegac for dat in bathdata]
 
 gPl_dct, gPr_dct, Pls_dct, Prs_dct = Dict(), Dict(), Dict(), Dict()
@@ -68,8 +67,6 @@ for ratio in [2.0, 4.0, 6.0, 8.0]
     Pls_dct[ratio] = [tr(taus[omegac] * Pl) for omegac in omegacs]
     Prs_dct[ratio] = [tr(taus[omegac] * Pr) for omegac in omegacs]
 end
-
-# data = load(require_file(joinpath(FLATIRON_ROOT, "HarryPlotter", "PlottingTools", "ReactionRates.jld2")), "data")
 
 
 function get_k_tilde(dataf, datab)
@@ -123,5 +120,4 @@ end
 
 plt = plot(plts..., size=(800, 400), layout=(1, 4), link=:y, dpi=300, bottom_margin=5Plots.mm, ylim=curr_ylims)
 
-# savefig(plt, joinpath(@__DIR__, "EquilibriumPopulations_DoubleWells.pdf"))
 savefig(plt, joinpath(@__DIR__, "fig14.pdf"))

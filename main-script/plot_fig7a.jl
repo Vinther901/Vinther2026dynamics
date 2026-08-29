@@ -1,6 +1,9 @@
+"""
+Reproduce Figure 7(a) (`fig7a.pdf`), the triple-well potential and localized
+eigenstates. Requires `data/SystemsData/overtonic_morefinetuned.jld2`.
+"""
+
 include(joinpath(@__DIR__, "..", "common.jl"))
-
-
 """
 Draw a manual arrow from `(x1,y1)` to `(x2,y2)` using a fixed visual-size
 arrowhead.  This is the notebook's GR-safe implementation.
@@ -570,4 +573,3 @@ savefig(plt_sys, joinpath(@__DIR__, "fig7a.pdf"))
 
 
     
-

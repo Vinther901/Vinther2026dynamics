@@ -14,14 +14,11 @@ Required data (relative to FLATIRON_ROOT):
 
 include(joinpath(@__DIR__, "..", "common.jl"))
 
-# sysdat = load(require_file(joinpath(@__DIR__, "..", "data", "SystemsData", "Data",
-#     "degenerate_asymmetric_triple_wells", "overtonic_morefinetuned.jld2")))
-sysdat = load(joinpath(@__DIR__, "..", "data", "SystemsData", "overtonic_morefinetuned.jld2"))
+sysdat = load(require_file(joinpath(@__DIR__, "..", "data", "SystemsData", "overtonic_morefinetuned.jld2")))
 
 N = 20
 evecs = sysdat["eigvecs"][:, 1:N]
 evals = sysdat["eigvals"][1:N]
-# X = evecs' * diagm(sysdat["x"] .* exp.(-abs.(sysdat["x"]) ./ 2) .* 2) * sysdat["eigvecs"]
 X = evecs' * diagm(sysdat["x"]) * sysdat["eigvecs"]
 
 T = convert_unit(300, :K, :au)

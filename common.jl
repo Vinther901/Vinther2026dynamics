@@ -2,22 +2,12 @@
 common.jl — shared setup and helper functions for the figure-reproduction scripts
 in this folder. Each `*.jl` script `include`s this file first.
 
-Directory layout:
-
-    FlatironReproduceFigures/       <- this folder (self-contained)
-      data/                        <- all data files, mirroring FlatironStudy's
-                                      SystemsData/, BathsData/, Experiments/,
-                                      HarryPlotter/ substructure (see README.md)
-    JuliaEnvs/MyJuliaEnv/           <- Julia project/environment
-    FlatironStudy/src/              <- analysis code (ITensorHEOM module)
-
-Only the source code is pulled from the sibling `FlatironStudy` repo; all data
-lives locally under `data/` so this folder can be copied/archived on its own.
+The repository is self-contained: shared inputs live under `data/`, while
+figure-specific inputs live next to their plotting scripts. See `README.md`
+for the complete script-to-data map.
 """
 
 const FLATIRON_ROOT = normpath(joinpath(@__DIR__, "data"))
-# const FLATIRON_SRC = normpath(joinpath(@__DIR__, "..", "FlatironStudy", "src"))
-# const JULIA_ENV = normpath(joinpath(@__DIR__, "..", "JuliaEnvs", "MyJuliaEnv"))
 
 using Pkg
 Pkg.activate(@__DIR__)
@@ -26,10 +16,6 @@ using Plots
 using JLD2: load
 using YAML: load_file
 using LinearAlgebra
-
-# include(joinpath(FLATIRON_SRC, "ITensorHEOM.jl"))
-# using .ITensorHEOM: convert_unit, get_dimful_param, get_bath_func
-# using .ITensorHEOM.ReactionRates: get_k
 
 """
     require_file(path)
