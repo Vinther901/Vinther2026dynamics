@@ -1,31 +1,32 @@
-# FlatironReproduceFigures
+# Vinther2026dynamics
 
 Standalone Julia scripts that reproduce the figures used in the manuscript.
-Each script is self-contained, adapted from the exploratory analysis
-notebooks in `FlatironStudy/HarryPlotter`, and can be run independently:
+Each script is self-contained and can be run independently:
 
 ```bash
-julia --project=../JuliaEnvs/MyJuliaEnv path/to/script.jl
+julia path/to/script.jl
 ```
 
-(or simply `julia script.jl` — every script activates the shared
-`JuliaEnvs/MyJuliaEnv` project itself via `common.jl`).
-
-Each script writes its figure(s) as a PDF into this folder.
+Each script writes its figure(s) as a PDF into the same folder that the script is in.
 
 ## Layout
 
+- `SI/` — scripts and data for the figures found in the SI.
+- `data/` — data files that is shared by the `main-script/` and `SI/`
+- `main-script/` — scripts and data for the figures found in the main manuscript.
 - `common.jl` — shared imports, environment activation, and helper functions
   (Gibbs-state bath corrections, eigenstate mixing, rate-bar plotting, etc.)
   used by several of the figure scripts. Not meant to be run directly.
-- `data/` — all data files, mirroring the relevant `SystemsData/`, `BathsData/`,
-  `Experiments/`, `HarryPlotter/` substructure of `FlatironStudy/`. Files that
-  were already available in this repo have been copied in (see table below);
-  anything still missing needs to be added under the same relative path.
-- One script per figure (or closely related group of figures), listed below.
 
-This folder is self-contained for data — only the analysis source code
-(`FlatironStudy/src/ITensorHEOM.jl`) and the shared Julia environment are
+TODO:
+- Include in readme: 
+  - an instruction to instantiate the environment and to load the files pushed with git lfs
+  - the size of the folders.
+  - a complete overview of the files and folders and how the scripts and data-files go together.
+
+<!-- - One script per figure (or closely related group of figures), listed below. -->
+
+<!-- This folder is self-contained for data — only the analysis source code and the shared Julia environment are
 pulled from sibling folders:
 
 ```
@@ -35,9 +36,9 @@ FlatironReproduceFigures/     this folder
   data/                       all data, self-contained
   common.jl
   *.jl                        one script per figure
-```
+``` -->
 
-## Scripts and required data
+<!-- ## Scripts and required data
 
 Paths below are relative to `FlatironReproduceFigures/data/`.
 
@@ -77,9 +78,9 @@ bottom of `FlatironStudy/HarryPlotter/PlottingTools/Figure Maker.ipynb` (on
 the machine where the `Experiments/...` data lives). It bundles the raw HEOM
 simulation traces into one portable `EnvironmentDrivenRates_data.jld2` file —
 copy just that one file to `data/HarryPlotter/EnvironmentDrivenRates_data.jld2`
-here and the script will load it directly.
+here and the script will load it directly. -->
 
-## Notes on fidelity to the original notebooks
+<!-- ## Notes on fidelity to the original notebooks
 
 The original analysis notebooks (`FlatironStudy/HarryPlotter/**/*.ipynb`)
 were exploratory and not written to be run top-to-bottom: `savefig` calls
@@ -94,4 +95,4 @@ Three additional exploratory variants from `ProbCurrent Figure Maker_latest.ipyn
 (`rate_plot3_ratio2.0_and_ratio0.5.pdf`, `symmetric_rate_diff_omegac2.pdf`) were
 not curated here, since they depend on manual, non-linear reruns of the
 notebook that could not be reliably reconstructed; `competing_pathways_rate_diff_omegac.jl`
-and `symmetric_transition_rates2.jl` cover the same underlying data/analysis.
+and `symmetric_transition_rates2.jl` cover the same underlying data/analysis. -->
