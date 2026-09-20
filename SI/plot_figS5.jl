@@ -31,6 +31,7 @@ sort!(bathdata, by=x -> x.omegac)
 
 println("Beware, this will take some time to run, since it computes the Gibbs-corrected populations for each bath file. Expect ~60min? (rough estimate)")
 println("It's possible to reduce the number of bath files to speed this up, but then the plot will be less smooth. See the commented-out line below.")
+# bathdata = bathdata = bathdata[[1,2,length(bathdata)÷3,2*length(bathdata)÷3,end]]  # <-- uncomment this line to reduce the number of bath files (and speed up the computation ~1min)
 omegacs = [dat.omegac for dat in bathdata]
 
 gPl_dct, gPr_dct, Pls_dct, Prs_dct = Dict(), Dict(), Dict(), Dict()
@@ -120,4 +121,4 @@ end
 
 plt = plot(plts..., size=(800, 400), layout=(1, 4), link=:y, dpi=300, bottom_margin=5Plots.mm, ylim=curr_ylims)
 
-savefig(plt, joinpath(@__DIR__, "fig14.pdf"))
+savefig(plt, joinpath(@__DIR__, "figS5.pdf"))

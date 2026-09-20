@@ -23,4 +23,4 @@ plt = plot(
     dpi=300,
     legend=nothing,
 )
-savefig(plt, joinpath(@__DIR__, "fig16.pdf"))
+savefig(plt, joinpath(@__DIR__, "figS7.pdf"))

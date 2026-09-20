@@ -42,7 +42,7 @@ Run a script from any working directory. For example:
 
 ```bash
 julia main-script/plot_fig5.jl
-julia SI/plot_fig14.jl
+julia SI/plot_figS5.jl
 ```
 
 The first run may take longer while Julia precompiles packages. All paths are resolved relative to the
@@ -82,14 +82,14 @@ collection of cavity-frequency files.
 | Figure 7(b–d) | `main-script/plot_fig7bcd.jl` | `main-script/fig7bcd.pdf` | `main-script/EnhancementSweep_…TripleWell…jld2`; `data/SystemsData/overtonic_morefinetuned.jld2` |
 | Figure 8 | `main-script/plot_fig8.jl` | `main-script/fig8.pdf` | `main-script/etac0.yaml`; `main-script/theta*.yaml` |
 | Figure 9 | `main-script/plot_fig9.jl` | `main-script/fig9.pdf` | `main-script/EnvironmentDrivenRates_data.jld2`; `main-script/etac0.yaml`; `main-script/theta*.yaml` |
-| Figure 11 | `SI/plot_fig11.jl` | `SI/fig11.pdf` | `SI/MarkovianityHEOMApproximations.jld2`; `data/BathsData/enhancement_bath_sweep_precise/etac0.jld2` |
-| Figure 12 | `SI/plot_fig12.jl` | `SI/fig12.pdf` | `SI/EnvironmentDrivenDistributionOfRates.jld2` |
-| Figure 13 (left) | `SI/plot_fig13_left.jl` | `SI/fig13_left.pdf` | `data/SystemsData/overtonic_morefinetuned.jld2`; bath files `etac0.jld2` and `distinguished_enhancement_bath/omegac1570.jld2` |
-| Figure 13 (right) | `SI/plot_fig13_right.jl` | `SI/fig13_right.pdf` | `data/SystemsData/overtonic_morefinetuned.jld2`; `data/BathsData/enhancement_bath_sweep_precise/*.jld2` |
-| Figure 14 | `SI/plot_fig14.jl` | `SI/fig14.pdf` | `main-script/ReactionRates.jld2`; double-well system files; `data/BathsData/enhancement_bath_sweep_precise/*.jld2` |
-| Figure 15 | `SI/plot_fig15.jl` | `SI/fig15.pdf` | none (model parameters are embedded in the script) |
-| Figure 16 | `SI/plot_fig16.jl` | `SI/fig16.pdf` | none (rate data are embedded in the script) |
-| Figure 17(a–d) | `SI/plot_fig17.jl` | `SI/fig17a.pdf`–`SI/fig17d.pdf` | double-well system files; SI `EnhancementSweep_…ratio{0.125,0.167,0.25,4.0,6.0,8.0}…jld2`; main-text ratio `0.5` and `2.0` sweep files |
+| Figure 11 | `SI/plot_figS2.jl` | `SI/figS2.pdf` | `SI/MarkovianityHEOMApproximations.jld2`; `data/BathsData/enhancement_bath_sweep_precise/etac0.jld2` |
+| Figure 12 | `SI/plot_figS3.jl` | `SI/figS3.pdf` | `SI/EnvironmentDrivenDistributionOfRates.jld2` |
+| Figure 13 (left) | `SI/plot_figS4_left.jl` | `SI/figS4_left.pdf` | `data/SystemsData/overtonic_morefinetuned.jld2`; bath files `etac0.jld2` and `distinguished_enhancement_bath/omegac1570.jld2` |
+| Figure 13 (right) | `SI/plot_figS4_right.jl` | `SI/figS4_right.pdf` | `data/SystemsData/overtonic_morefinetuned.jld2`; `data/BathsData/enhancement_bath_sweep_precise/*.jld2` |
+| Figure 14 | `SI/plot_figS5.jl` | `SI/figS5.pdf` | `main-script/ReactionRates.jld2`; double-well system files; `data/BathsData/enhancement_bath_sweep_precise/*.jld2` |
+| Figure 15 | `SI/plot_figS6.jl` | `SI/figS6.pdf` | none (model parameters are embedded in the script) |
+| Figure 16 | `SI/plot_figS7.jl` | `SI/figS7.pdf` | none (rate data are embedded in the script) |
+| Figure 17(a–d) | `SI/plot_figS8.jl` | `SI/figS8a.pdf`–`SI/figS8d.pdf` | double-well system files; SI `EnhancementSweep_…ratio{0.125,0.167,0.25,4.0,6.0,8.0}…jld2`; main-text ratio `0.5` and `2.0` sweep files |
 
 The long `EnhancementSweep_…` names retain the simulation parameters used to
 produce each dataset.

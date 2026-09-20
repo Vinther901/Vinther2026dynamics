@@ -35,8 +35,6 @@ Pright = I - Pleft
 Pl = evecs' * Pleft * evecs
 Pr = evecs' * Pright * evecs
 
-println("Beware, this can take some time to run, since it computes the Gibbs-corrected populations for each bath file. Expect ~15min (rough estimate)")
-
 folder = joinpath(FLATIRON_ROOT, "BathsData", "enhancement_bath_sweep_precise")
 files = sort(filter(endswith(".jld2"), readdir(folder; join=true)))
 bathdata = [
@@ -50,6 +48,9 @@ bathdata = [
     for f in files
 ]
 sort!(bathdata, by=x -> x.omegac)
+println("Beware, this can take some time to run, since it computes the Gibbs-corrected populations for each bath file. Expect ~15min (rough estimate)")
+# println("It's possible to reduce the number of bath files to speed this up, but then the plot will be less smooth. See the commented-out line below.")
+# bathdata = bathdata[[1,2,length(bathdata)÷3,2*length(bathdata)÷3,end]]  # <-- uncomment this line to reduce the number of bath files (and speed up the computation)
 omegacs = [dat.omegac for dat in bathdata]
 
 taus = Dict(dat.omegac => get_gibbs_correction(dat.z, dat.d, X, dE, gibbs, beta; N) for dat in bathdata)
@@ -116,12 +117,13 @@ plot!([NaN], [NaN], color=:blue, label=raw"$P^{eq}_\mathsf{right}$")
 plot!([NaN], [NaN], color=:black, label=raw"$P^{eq}_\mathsf{middle}$")
 plot!([NaN], [NaN], color=:red, label=raw"$P^{eq}_\mathsf{left}$", ylim=curr_ylims)
 
-yzoom = (0.3128, 0.3132)
+yzoom = (0.3105, 0.3107) #(0.3128, 0.3132)
 plot!(plt, [gPl + Pls[1]]; seriestype=:hline, subplot=2,
     inset=(1, bbox(0.07, 0.27, 0.38, 0.45, :bottom, :right)),
     color=:red, alpha=0.5, label=nothing, legend=false, ylim=yzoom,
     framestyle=:box, xlabel="", ylabel="", tickfontsize=5)
 plot!(plt, omegacs[2:end], gPl .+ Pls[2:end]; subplot=2, color=:red, ls=:solid, lw=1.5, label=nothing)
-plot!(plt, [0, 2050, 2220], [0.313, 0.3255, 0.313], color=:black, lw=0.2, alpha=0.5, label=nothing)
+# plot!(plt, [0, 2050, 2220], [0.313, 0.3255, 0.313], color=:black, lw=0.2, alpha=0.5, label=nothing)
+plot!(plt, [0, 2050, 2220], [0.311, 0.328, 0.311], color=:black, lw=0.2, alpha=0.5, label=nothing)
 
-savefig(plt, joinpath(@__DIR__, "fig13_right.pdf"))
+savefig(plt, joinpath(@__DIR__, "figS4_right.pdf"))

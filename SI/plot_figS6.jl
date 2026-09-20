@@ -107,4 +107,4 @@ plt = plot(p2, p1, layout=grid(1, 2, widths=[0.4, 0.6]), size=(1000, 300), dpi=3
     left_margin=5Plots.mm
 )
 
-savefig(plt, joinpath(@__DIR__, "fig15.pdf"))
+savefig(plt, joinpath(@__DIR__, "figS6.pdf"))

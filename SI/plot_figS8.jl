@@ -940,10 +940,10 @@ for (key, sysdat) in sysdata
         [[1, 2], [4, 5]],
     ][i]
     output_file = [
-        "fig17a.pdf",
-        "fig17b.pdf",
-        "fig17c.pdf",
-        "fig17d.pdf",
+        "figS8a.pdf",
+        "figS8b.pdf",
+        "figS8c.pdf",
+        "figS8d.pdf",
     ][i]
     
     rates = [get_rates_ij(rate_datas1[key][0],i,j;t0=6000).r for i in 1:10 for j in (i+1):10]

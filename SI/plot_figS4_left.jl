@@ -98,4 +98,4 @@ plot!(plt_sys,
     bottom_margin=-2Plots.mm
 )
 
-savefig(plt_sys, joinpath(@__DIR__, "fig13_left.pdf"))
+savefig(plt_sys, joinpath(@__DIR__, "figS4_left.pdf"))

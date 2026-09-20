@@ -60,9 +60,12 @@ built from the bath decomposition `(z, d)` (poles/residues of the bath
 correlation function) and the system dipole matrix `X` / energy gaps `dE`.
 """
 function get_gibbs_correction(z, d, X, dE, gibbs, beta; N=size(X, 1))
-    D = nu -> pi * nu * imag(sum(d ./ (z .* (nu .+ im .* z))))
-    dD = nu -> pi * imag(sum(d ./ (z .* (nu .+ im .* z)))) -
-               pi * nu * imag(sum(d ./ (z .* (nu .+ im .* z) .^ 2)))
+    # D = nu -> pi * nu * imag(sum(d ./ (z .* (nu .+ im .* z))))
+    # dD = nu -> pi * imag(sum(d ./ (z .* (nu .+ im .* z)))) -
+    #            pi * nu * imag(sum(d ./ (z .* (nu .+ im .* z) .^ 2)))
+    D = nu -> nu * imag(sum(d ./ (z .* (nu .+ im .* z))))
+    dD = nu -> imag(sum(d ./ (z .* (nu .+ im .* z)))) -
+               nu * imag(sum(d ./ (z .* (nu .+ im .* z) .^ 2)))
 
     tau = zeros(N, N)
     for i in 1:N

@@ -44,4 +44,4 @@ plot!(plt,
     ylabel=raw"$k\quad[\,\!\!\!\times 10^{-6} \mathsf{fs}^{-1}]$"
 )
 
-savefig(plt, joinpath(@__DIR__, "fig11.pdf"))
+savefig(plt, joinpath(@__DIR__, "figS2.pdf"))

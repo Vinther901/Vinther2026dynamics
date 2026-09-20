@@ -78,4 +78,4 @@ pbottom = plot(plots_bottom..., layout=(1, 5), size=(300 * 5, 200), grid=false, 
 
 pltout = plot(ptop, plot(pbottom, top_margin=-6Plots.mm), layout=(2, 1), size=(300 * 5, 200 * 2))
 
-savefig(pltout, joinpath(@__DIR__, "fig12.pdf"))
+savefig(pltout, joinpath(@__DIR__, "figS3.pdf"))
