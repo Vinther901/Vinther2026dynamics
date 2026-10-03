@@ -40,7 +40,7 @@ bath_params_by_theta = Dict(
 rind_by_theta = Dict(
     0.05 => [1, 9],
     0.25 => [1, 24],
-    0.5 => [1, 9, 12, 23],
+    0.5 => [9, 12, 23],
     0.75 => [1, 14, 16, 26, 29],
     0.95 => [1, 13, 14, 18, 19, 26],
 )
@@ -143,7 +143,7 @@ plt = plot([k0HEOM * 1e6], seriestype=:hline,
 )
 colors = palette(:rainbow1, length(thetas))
 for (theta, color) in zip(thetas, colors)
-    plot!(plt, omegacsFGR, (convert_unit(0.214^2 .* res[theta].kFGR, :au, :invfs) .* c .+ kD) * 1e6, lw=2; color, label=theta)
+    plot!(plt, omegacsFGR, (convert_unit(0.215^2 .* res[theta].kFGR, :au, :invfs) .* c .+ kD) * 1e6, lw=2; color, label=theta)
 end
 for (theta, color) in zip(thetas, colors)
     plot!(plt, res[theta].omegacs, res[theta].kHEOM * 1e6; color, lw=1, ls=:dash, marker=:o, label=nothing)
