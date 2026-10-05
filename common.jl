@@ -885,3 +885,147 @@ function S_isotropic(params::Dict)
     end
     return S
 end
+
+using QuadGK: quadgk
+
+"""
+    orientation_grid_3d(; nmu=200, npsi=200)
+
+Equal-weight midpoint quadrature for dΩ/(4π) = dμ dψ/(4π), where
+μ = cos(φ) ∈ [-1, 1] and ψ ∈ [0, 2π). Angles are in radians.
+The poles and the periodic endpoint are not counted twice.
+"""
+function orientation_grid_3d(; nmu::Integer=200, npsi::Integer=200)
+    nmu > 0 && npsi > 0 || throw(ArgumentError("Grid sizes must be positive."))
+    mu = [-1 + (2i - 1) / nmu for i in 1:nmu]
+    psi = [2π * (j - 0.5) / npsi for j in 1:npsi]
+    return (; mu, psi)
+end
+
+"""
+    spectral_coefficients_3d(params)
+
+Return a callable `(ω, μ) -> (A, B, C)` such that the unaveraged spectral
+density is `A + B*η_R + C*η_R^2`, with η_Q = tilde_η_Q*μ. Frequencies
+and the returned spectral density are in atomic units. The existing
+`Parameters.tilde_η_S` field represents tilde_η_R in the dipole geometry.
+
+Keeping the quadratic dependence on η_R explicit lets the frequency integral
+be reused for all θ and ψ, without averaging away the rate distribution.
+"""
+function spectral_coefficients_3d(params)
+    wc = get_dimful_param(params.ω_c)
+    wq = get_dimful_param(params.ω_Q)
+    cq = get_dimful_param(params.c_Q)
+    alpha = get_dimful_param(params.α)
+    lambda = get_dimful_param(params.λ_Q)
+    gamma = get_dimful_param(params.γ_Q)
+    ec = params.η_c
+    eq = params.tilde_η_Q
+    return function (omega, mu)
+        eta_q = eq * mu
+        z = omega^2 - im * alpha * omega
+        gc = z - wc^2
+        jdl = 2 * lambda * gamma * omega / (omega^2 + gamma^2)
+        gq = omega^2 - wq^2 - (im + omega / gamma) * jdl
+        denominator = gc * gq - 2 * z * wc * ec^2 * eta_q^2
+        a = gc * cq^2 / denominator
+        b = 4 * eta_q * z * cq * wc * ec^2 / denominator
+        c = (2 * gq * wc^3 * ec^2 + 4 * eta_q^2 * z * wc^2 * ec^4) / denominator
+        return (imag(a), imag(b), imag(c))
+    end
+end
+
+"""
+    J_orientation_3d(omega, theta, phi, psi, params)
+
+Unaveraged spectral density for fixed internal dipole angle θ and molecular
+orientation (φ, ψ), all in radians:
+
+    η_Q = tilde_η_Q cos(φ)
+    η_R = tilde_η_R [cos(θ)cos(φ) + sin(θ)sin(φ)cos(ψ)].
+
+At ψ = 0 this reduces to the original planar projection cos(θ - φ).
+"""
+function J_orientation_3d(omega::Real, theta::Real, phi::Real, psi::Real, params)
+    eta_r = params.tilde_η_S * (cos(theta) * cos(phi) + sin(theta) * sin(phi) * cos(psi))
+    a, b, c = spectral_coefficients_3d(params)(omega, cos(phi))
+    return a + b * eta_r + c * eta_r^2
+end
+
+"""
+    rate_coefficients_3d(params, mu; omega0, width, omega_max=0.1, rtol=1e-8)
+
+Compute the three coefficients of the raw FGR rate `a + b*η_R + c*η_R^2`:
+
+    ∫₀^omega_max width/[π((ω-omega0)^2+width^2)] * 2J(ω)/(exp(ω/T)-1) dω.
+
+This is the original Fig. S3 integral `pdf*(S-S0)*exp(-ω/T)`: the identical
+phonon baths in S and S0 cancel, and the baseline cavity coupling is zero.
+The spectator contribution remains. All frequencies, T, and raw rates use
+atomic units. Apply the original transition-dipole factor, empirical scale,
+unit conversion, and baseline rate *after* this integral.
+"""
+function rate_coefficients_3d(params, mu::Real;
+    omega0=convert_unit(1205, :invcm, :au),
+    width=convert_unit(30, :invcm, :au),
+    omega_max=0.1, rtol=1e-8,
+)
+    -1 <= mu <= 1 || throw(ArgumentError("mu must lie in [-1, 1]."))
+    width > 0 && omega_max > 0 && rtol > 0 ||
+        throw(ArgumentError("width, omega_max, and rtol must be positive."))
+    temperature = get_dimful_param(params.T)
+    temperature >= 0 || throw(ArgumentError("Temperature must be nonnegative."))
+    temperature == 0 && return zeros(3)
+    coefficients = spectral_coefficients_3d(params)
+    integrand = function (omega)
+        lorentzian = width / (π * ((omega - omega0)^2 + width^2))
+        factor = 2 * lorentzian / expm1(omega / temperature)
+        return factor .* collect(coefficients(omega, mu))
+    end
+    # Split at the uncoupled resonances and the Lorentzian peak so adaptive
+    # quadrature resolves the narrow spectator line throughout the sweep.
+    points = sort!(unique!([0.0, omega_max,
+        filter(w -> 0 < w < omega_max,
+            [get_dimful_param(params.ω_c), get_dimful_param(params.ω_Q), omega0])...]))
+    value, _ = quadgk(integrand, points...; rtol)
+    return value
+end
+
+"""
+    rate_distribution_3d(omegacs, thetas; nmu=200, npsi=200, eta_c=0.1, ...)
+
+Compute raw FGR rates on an equal-solid-angle grid. `omegacs` is in cm⁻¹;
+`thetas` contains internal dipole angles **in radians**. Returns
+`(; rates, mu, psi)`, with `rates[theta].K[i, :]` holding equally weighted
+orientation samples at cavity frequency i (μ varies fastest, then ψ).
+Defaults reproduce the original Fig. S3 physical parameters. Increase nmu
+and npsi to check angular convergence; extrema are sampled grid extrema.
+"""
+function rate_distribution_3d(omegacs, thetas;
+    nmu::Integer=200, npsi::Integer=200, eta_c=0.1,
+    omega0=convert_unit(1205, :invcm, :au),
+    width=convert_unit(30, :invcm, :au), omega_max=0.1, rtol=1e-8,
+    progress=false,
+)
+    grid = orientation_grid_3d(; nmu, npsi)
+    params = initialize_parameters(Dict("value" => first(omegacs), "unit" => "invcm"), eta_c)
+    projections = Dict(theta => [params.tilde_η_S *
+        (cos(theta) * mu + sin(theta) * sqrt(1 - mu^2) * cos(psi))
+        for mu in grid.mu, psi in grid.psi] for theta in thetas)
+    rates = Dict(theta => (; K=zeros(length(omegacs), nmu * npsi)) for theta in thetas)
+    for (i, wc) in enumerate(omegacs)
+        params.ω_c["value"] = wc
+        for (j, mu) in enumerate(grid.mu)
+            a, b, c = rate_coefficients_3d(params, mu; omega0, width, omega_max, rtol)
+            for theta in thetas, l in eachindex(grid.psi)
+                eta_r = projections[theta][j, l]
+                rates[theta].K[i, j + (l - 1) * nmu] = a + b * eta_r + c * eta_r^2
+            end
+        end
+        if progress && (i == 1 || i % 25 == 0 || i == length(omegacs))
+            @info "3D rate distribution" completed=i total=length(omegacs)
+        end
+    end
+    return (; rates, grid.mu, grid.psi)
+end

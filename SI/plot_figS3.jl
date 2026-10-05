@@ -15,7 +15,6 @@ Frequency integration uses rtol=1e-8 and the original 0–0.1 a.u. interval.
 """
 
 include(joinpath(@__DIR__, "..", "common.jl"))
-include(joinpath(@__DIR__, "..", "common_aux.jl"))
 using StatsBase
 
 c = 0.38
