@@ -1,8 +1,8 @@
 # Figure-reproduction data for Vinther et al. (2026)
 
 This repository contains the Julia scripts and simulation data needed to
-reproduce the figures accompanying the manuscript **[paper title and citation
-to be added when available]**.
+reproduce the figures accompanying the manuscript **[Competing pathways in
+polaritonic chemistry and general harmonic environments](https://arxiv.org/abs/2610.04817)**.
 
 Each plotting script is independent: it activates the repository's Julia
 environment, reads only files included here, and writes PDF output next to the
@@ -102,6 +102,22 @@ produce each dataset.
   versions. The committed `Manifest.toml` is provided to minimize such drift.
 - A missing input raises an error containing its expected path. In most cases,
   this means `git lfs pull` has not completed.
+
+## Citation
+
+If you use this repository, please cite the associated preprint:
+
+```bibtex
+@misc{vinther2026competingpathwayspolaritonicchemistry,
+  title={Competing pathways in polaritonic chemistry and general harmonic environments},
+  author={Jonas Vinther and Leonardo A. Cunha and Johannes Flick},
+  year={2026},
+  eprint={2610.04817},
+  archivePrefix={arXiv},
+  primaryClass={quant-ph},
+  url={https://arxiv.org/abs/2610.04817}
+}
+```
 
 ## License
 
